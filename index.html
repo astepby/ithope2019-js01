@@ -10,10 +10,32 @@
     }
   </style>
   <script>
-    var state=[0,0,0,0,0,0,0,0];
+    var firstFlip = 0;
+    var secondFlip = 0;
+    var isMatched = 0;
+    var status=[0,0,0,0,0,0,0,0];
     function flip(num){
       var selectedCard = document.getElementById("card"+num);
       selectedCard.src="card/0"+(num%4+1)+".png";
+      
+      if(firstFlip==0){
+        firstFlip=num;
+      }else if(secondFlip==0){
+        secondFlip=num;
+      }else{
+        flipback(firstFlip,secondFlip)
+        firstFlip=0;
+        secondFlip=0;
+      }
+      alert("1:"+firstFlip + "  2:"+secondFlip)
+
+    }
+    function flipback(firstFlip,secondFlip){
+      var selectedCard1 = document.getElementById("card"+firstFlip);
+      var selectedCard2 = document.getElementById("card"+secondFlip);
+      alert("card"+firstFlip);
+      selectedCard1.src="card/cardback.png";
+      selectedCard2.src="card/cardback.png";
     }
 
   </script>
