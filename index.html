@@ -10,32 +10,87 @@
     }
   </style>
   <script>
-    var firstFlip = 0;
-    var secondFlip = 0;
-    var isMatched = 0;
+    var firstCard = null;
+    var secondCard = null;
     var status=[0,0,0,0,0,0,0,0];
-    function flip(num){
-      var selectedCard = document.getElementById("card"+num);
-      selectedCard.src="card/0"+(num%4+1)+".png";
-      
-      if(firstFlip==0){
-        firstFlip=num;
-      }else if(secondFlip==0){
-        secondFlip=num;
-      }else{
-        flipback(firstFlip,secondFlip)
-        firstFlip=0;
-        secondFlip=0;
-      }
-      alert("1:"+firstFlip + "  2:"+secondFlip)
+    var array = [1,2,3,4,1,2,3,4];
 
+    // ---- 첫시작 ----
+    window.onload = function(){
+      array=shuffle(array);
+      document.getElementById("arr").innerText=array;
     }
-    function flipback(firstFlip,secondFlip){
-      var selectedCard1 = document.getElementById("card"+firstFlip);
-      var selectedCard2 = document.getElementById("card"+secondFlip);
-      alert("card"+firstFlip);
-      selectedCard1.src="card/cardback.png";
-      selectedCard2.src="card/cardback.png";
+    // ---- 카드셔플 ----
+    function shuffle(array){
+      for(var i=array.length-1; i>0; i--){
+        var rand=random(0,i);
+        swap(array,i,rand);
+        //document.getElementById("arr").innerText=array;
+      }
+      return array;
+    }
+    function random(from=1,to=4){
+      range=to-from+1;
+      return Math.floor(Math.random()*range)+from
+    }
+    function swap(array, i, j){
+      var temp = array[i];
+      array[i]=array[j];
+      array[j]=temp;
+    }
+    // ---- endOf카드셔플 ----
+
+    // ---- onclick이벤트 카드 뒤집기 ----
+    function flip(id){ 
+      var selectedCard = document.getElementById("card"+id);
+      selectedCard.src="card/0"+array[id-1]+".png";
+      //첫 선택 시
+      if(firstCard==null){
+        firstCard=document.getElementById("card"+id);
+      }
+      //두 번째 선택 시
+      else{
+        //동일 카드 선택 시 다시 뒤집고 return
+        if(firstCard.id == "card"+id){
+          flipBack(id)
+          firstCard=null;
+          document.getElementById(firstCard.id).innerText=""
+          return;
+        //다른 카드 선택 시 firstCard와 secondCard를 비교
+        }else{
+          secondCard=document.getElementById("card"+id);
+          isMatched();
+        }
+      }
+      //firstCard와 secondCard를 비교
+      function isMatched(){
+        //firstCard의 그림과 secondCard의 그림이 같으면 축하 후 return
+        if(firstCard.src==secondCard.src){
+          document.getElementById("msg").innerText="짝~짝~짝~~ 성공~~ 축하합니다~~~~~!!"
+          firstCard=null;
+          secondCard=null;
+          return
+        }
+        //그림이 서로 다르면, 1초 쉬고 card 모두 뒤집고 초기화 후 return
+        else{
+          setTimeout(() => {
+            flipBackAll()
+            firstCard=null;
+            secondCard=null;  
+          }, 1000);
+          return;
+        }
+      }   
+      
+    }
+    function flipBack(cardId){
+        var resetCard = document.getElementById("card"+cardId);
+        resetCard.src="card/cardback.png";
+    }
+    function flipBackAll(){
+      for(var cardId=1; cardId<=8; cardId++){
+        flipBack(cardId);
+      }
     }
 
   </script>
@@ -48,6 +103,9 @@
     <img src="card/cardback.png" alt="" id="card6" onclick="flip(6)"/>
     <img src="card/cardback.png" alt="" id="card7" onclick="flip(7)"/>
     <img src="card/cardback.png" alt="" id="card8" onclick="flip(8)"/>
-    두 개의 카드를 뒤집으세요.
+    <p id="msg">두 개의 카드를 뒤집으세요.</p>
+    첫번째 카드: <span id="first"></span> <br/>
+    두번째 카드: <span id="second"></span> <br/>   
+    정답: <span id="arr" onclick="shuffle()"></p>
   </body>
 </html>
