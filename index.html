@@ -10,17 +10,12 @@
     }
   </style>
   <script>
-    var firstCard = null;
-    var secondCard = null;
-    var status=[0,0,0,0,0,0,0,0];
-    var array = [1,2,3,4,1,2,3,4];
-
-    // ---- 첫시작 ----
+    // ---- 화면이 켜지면 카드 종류를 저장하는 배열변수를 셔플 ----
     window.onload = function(){
       array=shuffle(array);
       document.getElementById("arr").innerText=array;
     }
-    // ---- 카드셔플 ----
+    // ---- 카드셔플함수 ----
     function shuffle(array){
       for(var i=array.length-1; i>0; i--){
         var rand=random(0,i);
@@ -40,56 +35,75 @@
     }
     // ---- endOf카드셔플 ----
 
-    // ---- onclick이벤트 카드 뒤집기 ----
+
+    //첫번째 카드를 저장하는 변수
+    var firstCard = null;
+    //두번째 카드를 저장하는 변수
+    var secondCard = null;
+    //카드의 종류를 저장하는 배열변수
+    var array = [1,2,3,4,1,2,3,4];
+
+
+    // ---- onclick이벤트 id를 받아서 카드 앞면으로 뒤집는 함수 ----
     function flip(id){ 
+      //선택한 카드를 저장하고 카드를 뒤집는다. 
       var selectedCard = document.getElementById("card"+id);
       selectedCard.src="card/0"+array[id-1]+".png";
-      //첫 선택 시
+
+      //첫 선택 시 첫번째 카드를 저장한다.
       if(firstCard==null){
         firstCard=document.getElementById("card"+id);
       }
       //두 번째 선택 시
       else{
-        //동일 카드 선택 시 다시 뒤집고 return
+        //첫번째카드와 선택한카드가 같다면 다시 뒤집고 첫번째카드 초기화
         if(firstCard.id == "card"+id){
           flipBack(id)
           firstCard=null;
-          document.getElementById(firstCard.id).innerText=""
-          return;
-        //다른 카드 선택 시 firstCard와 secondCard를 비교
-        }else{
+        }
+        //첫번째카드와 선택한카드가 다르다면 
+        else{
+          //두번째 카드를 저장하고
+          //isMatched()함수로 firstCard와 secondCard를 비교
           secondCard=document.getElementById("card"+id);
           isMatched();
         }
       }
-      //firstCard와 secondCard를 비교
+      
+      //isMatched()에서 firstCard와 secondCard를 비교하는 함수
       function isMatched(){
-        //firstCard의 그림과 secondCard의 그림이 같으면 축하 후 return
+        //firstCard의 그림과 secondCard의 그림이 같으면
         if(firstCard.src==secondCard.src){
+          //축하메시지 출력
+          //첫번째/두번째 카드초기화
           document.getElementById("msg").innerText="짝~짝~짝~~ 성공~~ 축하합니다~~~~~!!"
           firstCard=null;
           secondCard=null;
-          return
         }
-        //그림이 서로 다르면, 1초 쉬고 card 모두 뒤집고 초기화 후 return
+        //그림이 서로 다르면, 
         else{
+          //1초 쉬고 card 모두 뒤집고 첫번째/두번째 카드초기화
           setTimeout(() => {
             flipBackAll()
             firstCard=null;
             secondCard=null;  
           }, 1000);
-          return;
         }
       }   
       
     }
-    function flipBack(cardId){
-        var resetCard = document.getElementById("card"+cardId);
+    //cardId를 받아서 한 장만 뒷면으로 뒤집는 함수
+    function flipBack(id){
+        //다시 뒤집을 카드 저장
+        var resetCard = document.getElementById("card"+id);
+        //카드뒷면으로 바꿈
         resetCard.src="card/cardback.png";
     }
+    //모두 뒷면으로 뒤집는 함수
     function flipBackAll(){
-      for(var cardId=1; cardId<=8; cardId++){
-        flipBack(cardId);
+      //카드id를 바꾸며 한장만 뒤집는 함수를 호출
+      for(var id=1; id<=8; id++){
+        flipBack(id);
       }
     }
 
@@ -99,13 +113,12 @@
     <img src="card/cardback.png" alt="" id="card2" onclick="flip(2)"/>
     <img src="card/cardback.png" alt="" id="card3" onclick="flip(3)"/>
     <img src="card/cardback.png" alt="" id="card4" onclick="flip(4)"/>
+    <br>
     <img src="card/cardback.png" alt="" id="card5" onclick="flip(5)"/>
     <img src="card/cardback.png" alt="" id="card6" onclick="flip(6)"/>
     <img src="card/cardback.png" alt="" id="card7" onclick="flip(7)"/>
     <img src="card/cardback.png" alt="" id="card8" onclick="flip(8)"/>
     <p id="msg">두 개의 카드를 뒤집으세요.</p>
-    첫번째 카드: <span id="first"></span> <br/>
-    두번째 카드: <span id="second"></span> <br/>   
     정답: <span id="arr" onclick="shuffle()"></p>
   </body>
 </html>
